@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.tomgibara.collect.AbstractMapEntry;
-import com.tomgibara.collect.StoreIterator;
 import com.tomgibara.fundament.Mutability;
 import com.tomgibara.hashing.Hasher;
 import com.tomgibara.storage.Store;
@@ -246,12 +245,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 		@Override
 		public Iterator<K> iterator() {
-			return new StoreIterator<V, K>(store) {
-				@Override
-				protected K get(int index) {
-					return strings.get(index);
-				}
-			};
+			return store.transformedIterator((i,v) -> strings.get(i));
 		}
 	}
 	
@@ -287,12 +281,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 		@Override
 		public Iterator<V> iterator() {
-			return new StoreIterator<V,V>(store) {
-				@Override
-				protected V get(int index) {
-					return store.get(index);
-				}
-			};
+			return store.iterator();
 		}
 
 	}
@@ -337,12 +326,8 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 		@Override
 		public Iterator<Entry<K, V>> iterator() {
-			return new StoreIterator<V, Entry<K, V>>(store) {
-				@Override
-				protected MinimalEntry get(int index) {
-					return new MinimalEntry(index);
-				}
-			};
+			//TODO could just iterate over positions?
+			return store.transformedIterator((i,k) -> new MinimalEntry(i));
 		}
 		
 		@Override
