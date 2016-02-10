@@ -7,6 +7,7 @@ import com.tomgibara.hashing.Hasher;
 import com.tomgibara.permute.Permutation;
 import com.tomgibara.storage.Storage;
 import com.tomgibara.storage.Store;
+import com.tomgibara.storage.Stores;
 
 public class Minimal<T> {
 
@@ -40,9 +41,14 @@ public class Minimal<T> {
 	public Store<T> getStore() {
 		if (store == null) {
 			Optional<Class<T>> optionalType = domain.getType();
-			//TODO this is a hack...
-			T nv = domain.getValues().iterator().next();
-			Storage<T> storage = optionalType.isPresent() ? Storage.typed(optionalType.get(),nv) : Storage.generic(nv);
+			Storage<T> storage;
+			if (optionalType.isPresent()) {
+				Class<T> type = optionalType.get();
+				Optional<T> nv = Stores.defaultNullValue(type);
+				storage = nv.isPresent() ? Storage.typed(type, nv.get()) : Storage.typed(type);
+			} else {
+				storage = Storage.generic();
+			}
 			store = storage.newStore(domain.getValues().size());
 			populate();
 			store = store.immutableView();
