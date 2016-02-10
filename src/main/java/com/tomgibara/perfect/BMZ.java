@@ -149,7 +149,7 @@ final class BMZ<E> {
 			assert(m <= n);
 			this.n = n;
 			this.m = m;
-			edges = Storage.typed(long.class, false).newStore(m);
+			edges = Storage.typed(long.class, 0L).newStore(m);
 			adjacencyList = new List[n];
 		}
 

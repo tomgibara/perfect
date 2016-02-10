@@ -39,7 +39,7 @@ public class PerfectionTest {
 
 		{
 			int size = 1000000;
-			Store<Long> store = Storage.typed(long.class, false).newStore(size);
+			Store<Long> store = Storage.typed(long.class, 0L).newStore(size);
 			for (int i = 0; i < size; i++) {
 				store.set(i, (long) i);
 			}
@@ -48,7 +48,7 @@ public class PerfectionTest {
 
 		{
 			int size = 100000;
-			Store<Long> store = Storage.typed(long.class, false).newStore(size);
+			Store<Long> store = Storage.typed(long.class, 0L).newStore(size);
 			for (int i = 0; i < size; i++) {
 				store.set(i, (long) i);
 			}

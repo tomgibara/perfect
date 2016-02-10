@@ -14,7 +14,7 @@ public class MinimalMapTest {
 	@Test
 	public void testMap() {
 		Minimal<String> animals = Perfect.over("ostrich", "dog", "snail", "centipede").usingDefaults().maybePerfect().get().minimized();
-		Minimal<String>.Maps<Integer> counts = animals.withNullableTypedStorage(int.class);
+		Minimal<String>.Maps<Integer> counts = animals.withTypedStorage(int.class);
 		MinimalMap<String, Integer> legs = counts.newMap();
 		assertNull( legs.get("ostrich") );
 		legs.put("ostrich", 2);

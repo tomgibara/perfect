@@ -40,7 +40,9 @@ public class Minimal<T> {
 	public Store<T> getStore() {
 		if (store == null) {
 			Optional<Class<T>> optionalType = domain.getType();
-			Storage<T> storage = optionalType.isPresent() ? Storage.typed(optionalType.get(),false) : Storage.generic(false);
+			//TODO this is a hack...
+			T nv = domain.getValues().iterator().next();
+			Storage<T> storage = optionalType.isPresent() ? Storage.typed(optionalType.get(),nv) : Storage.generic(nv);
 			store = storage.newStore(domain.getValues().size());
 			populate();
 			store = store.immutableView();
@@ -60,21 +62,19 @@ public class Minimal<T> {
 	}
 	
 	public <V> Maps<V> withGenericStorage() {
-		return new Maps<>(Storage.generic(false));
+		return new Maps<>(Storage.generic());
 	}
 	
-	public <V> Maps<V> withNullableGenericStorage() {
-		return new Maps<>(Storage.generic(true));
+	public <V> Maps<V> withGenericStorage(V nullValue) {
+		return new Maps<>(Storage.generic(nullValue));
 	}
 	
 	public <V> Maps<V> withTypedStorage(Class<V> type) {
-		if (type == null) throw new IllegalArgumentException("null type");
-		return new Maps<>(Storage.typed(type, false));
+		return new Maps<>(Storage.typed(type));
 	}
 	
-	public <V> Maps<V> withNullableTypedStorage(Class<V> type) {
-		if (type == null) throw new IllegalArgumentException("null type");
-		return new Maps<>(Storage.typed(type, true));
+	public <V> Maps<V> withTypedStorage(Class<V> type, V nullValue) {
+		return new Maps<>(Storage.typed(type, nullValue));
 	}
 
 	// private utility methods
