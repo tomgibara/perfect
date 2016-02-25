@@ -81,7 +81,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	@Override
 	public boolean containsKey(Object key) {
 		int i = indexOf(key);
-		return i == -1 ? false : store.get(i) != null;
+		return i != -1 && !store.isNull(i);
 	}
 	
 	@Override
@@ -237,8 +237,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		public boolean remove(Object o) {
 			int i = indexOf(o);
 			if (i == -1) return false;
-			V value = store.get(i);
-			if (value == null) return false;
+			if (store.isNull(i)) return false;
 			store.set(i, null);
 			return true;
 		}
