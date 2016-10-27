@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.stream.IntStream;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.tomgibara.hashing.HashSize;
@@ -13,6 +12,7 @@ import com.tomgibara.hashing.Hasher;
 import com.tomgibara.hashing.Hashing;
 import com.tomgibara.storage.Storage;
 import com.tomgibara.storage.Store;
+import com.tomgibara.storage.StoreNullity;
 
 public class PerfectionTest {
 
@@ -36,10 +36,11 @@ public class PerfectionTest {
 	@Test
 	public void testLarge() {
 		Hasher<Long> h = Hashing.<Long>objectHasher();
+		StoreNullity<Long> nullity = StoreNullity.settingNullToValue(0L);
 
 		{
 			int size = 1000000;
-			Store<Long> store = Storage.typed(long.class, 0L).newStore(size);
+			Store<Long> store = Storage.typed(long.class, nullity).newStore(size);
 			for (int i = 0; i < size; i++) {
 				store.set(i, (long) i);
 			}
@@ -48,7 +49,7 @@ public class PerfectionTest {
 
 		{
 			int size = 100000;
-			Store<Long> store = Storage.typed(long.class, 0L).newStore(size);
+			Store<Long> store = Storage.typed(long.class, nullity).newStore(size);
 			for (int i = 0; i < size; i++) {
 				store.set(i, (long) i);
 			}

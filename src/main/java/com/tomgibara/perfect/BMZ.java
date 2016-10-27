@@ -16,12 +16,17 @@ import com.tomgibara.hashing.Hasher;
 import com.tomgibara.hashing.Hashing;
 import com.tomgibara.storage.Storage;
 import com.tomgibara.storage.Store;
+import com.tomgibara.storage.StoreNullity;
 import com.tomgibara.streams.StreamSerializer;
 
 // BMZ implementation based on:
 // http://remis-thoughts.blogspot.co.uk/2012/03/perfect-hashes-in-java-given-set-of-m.html
 
 final class BMZ<E> {
+
+	// statics
+	
+	private static final StoreNullity<Long> ZERO_NULLITY = StoreNullity.settingNullToValue(0L);
 
 	// static helper methods
 	
@@ -149,7 +154,7 @@ final class BMZ<E> {
 			assert(m <= n);
 			this.n = n;
 			this.m = m;
-			edges = Storage.typed(long.class, 0L).newStore(m);
+			edges = Storage.typed(long.class, ZERO_NULLITY).newStore(m);
 			adjacencyList = new List[n];
 		}
 

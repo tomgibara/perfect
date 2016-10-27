@@ -7,6 +7,7 @@ import com.tomgibara.hashing.Hasher;
 import com.tomgibara.permute.Permutation;
 import com.tomgibara.storage.Storage;
 import com.tomgibara.storage.Store;
+import com.tomgibara.storage.StoreNullity;
 import com.tomgibara.storage.Stores;
 
 public class Minimal<T> {
@@ -44,8 +45,7 @@ public class Minimal<T> {
 			Storage<T> storage;
 			if (optionalType.isPresent()) {
 				Class<T> type = optionalType.get();
-				Optional<T> nv = Stores.defaultNullValue(type);
-				storage = nv.isPresent() ? Storage.typed(type, nv.get()) : Storage.typed(type);
+				storage = Storage.typed(type, StoreNullity.defaultForType(type));
 			} else {
 				storage = Storage.generic();
 			}
@@ -72,7 +72,7 @@ public class Minimal<T> {
 	}
 	
 	public <V> Maps<V> withGenericStorage(V nullValue) {
-		return new Maps<>(Storage.generic(nullValue));
+		return new Maps<>(Storage.generic(StoreNullity.settingNullToValue(nullValue)));
 	}
 	
 	public <V> Maps<V> withTypedStorage(Class<V> type) {
@@ -80,7 +80,7 @@ public class Minimal<T> {
 	}
 	
 	public <V> Maps<V> withTypedStorage(Class<V> type, V nullValue) {
-		return new Maps<>(Storage.typed(type, nullValue));
+		return new Maps<>(Storage.typed(type, StoreNullity.settingNullToValue(nullValue)));
 	}
 
 	// private utility methods
