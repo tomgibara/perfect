@@ -165,7 +165,7 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	// private utility methods
 	
 	private int indexOf(Object o) {
-		if (!store.valueType().isInstance(o)) return -1;
+		if (!store.isSettable(o)) return -1;
 		E e = (E) o;
 		//TODO no way to make this more efficient yet
 		int i;

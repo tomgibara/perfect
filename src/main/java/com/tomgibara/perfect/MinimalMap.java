@@ -181,7 +181,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	}
 
 	private int indexOf(Object o) {
-		if (!strings.valueType().isInstance(o)) return -1;
+		if (!strings.isSettable(o)) return -1;
 		K k = (K) o;
 		//TODO no way to make this more efficient yet
 		int i;

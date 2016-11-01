@@ -7,8 +7,7 @@ import com.tomgibara.hashing.Hasher;
 import com.tomgibara.permute.Permutation;
 import com.tomgibara.storage.Storage;
 import com.tomgibara.storage.Store;
-import com.tomgibara.storage.StoreNullity;
-import com.tomgibara.storage.Stores;
+import com.tomgibara.storage.StoreType;
 
 public class Minimal<T> {
 
@@ -42,14 +41,14 @@ public class Minimal<T> {
 	public Store<T> getStore() {
 		if (store == null) {
 			Optional<Class<T>> optionalType = domain.getType();
-			Storage<T> storage;
+			StoreType<T> storeType;
 			if (optionalType.isPresent()) {
 				Class<T> type = optionalType.get();
-				storage = Storage.typed(type, StoreNullity.defaultForType(type));
+				storeType = StoreType.of(type).settingNullToDefault();
 			} else {
-				storage = Storage.generic();
+				storeType = StoreType.generic();
 			}
-			store = storage.newStore(domain.getValues().size());
+			store = storeType.storage().newStore(domain.getValues().size());
 			populate();
 			store = store.immutableView();
 		}
@@ -68,19 +67,19 @@ public class Minimal<T> {
 	}
 	
 	public <V> Maps<V> withGenericStorage() {
-		return new Maps<>(Storage.generic());
+		return new Maps<>(StoreType.<V>generic().storage());
 	}
 	
 	public <V> Maps<V> withGenericStorage(V nullValue) {
-		return new Maps<>(Storage.generic(StoreNullity.settingNullToValue(nullValue)));
+		return new Maps<>(StoreType.<V>generic().settingNullToValue(nullValue).storage());
 	}
 	
 	public <V> Maps<V> withTypedStorage(Class<V> type) {
-		return new Maps<>(Storage.typed(type));
+		return new Maps<>(StoreType.of(type).storage());
 	}
 	
 	public <V> Maps<V> withTypedStorage(Class<V> type, V nullValue) {
-		return new Maps<>(Storage.typed(type, StoreNullity.settingNullToValue(nullValue)));
+		return new Maps<>(StoreType.of(type).settingNullToValue(nullValue).storage());
 	}
 
 	// private utility methods

@@ -31,7 +31,7 @@ public final class Perfect<T> {
 
 	public static <T> PerfectDomain<T> over(Store<T> values) {
 		if (values == null) throw new IllegalArgumentException("null values");
-		return new PerfectDomain<>(values.asList(), values.valueType());
+		return new PerfectDomain<>(values.asList(), values.type().valueType());
 	}
 
 	private static class AdaptedCollection<E> extends AbstractCollection<E> {

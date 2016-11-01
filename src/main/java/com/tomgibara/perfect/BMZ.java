@@ -16,7 +16,7 @@ import com.tomgibara.hashing.Hasher;
 import com.tomgibara.hashing.Hashing;
 import com.tomgibara.storage.Storage;
 import com.tomgibara.storage.Store;
-import com.tomgibara.storage.StoreNullity;
+import com.tomgibara.storage.StoreType;
 import com.tomgibara.streams.StreamSerializer;
 
 // BMZ implementation based on:
@@ -26,7 +26,7 @@ final class BMZ<E> {
 
 	// statics
 	
-	private static final StoreNullity<Long> ZERO_NULLITY = StoreNullity.settingNullToValue(0L);
+	private static final Storage<Long> storage = StoreType.of(long.class).settingNullToDefault().storage();
 
 	// static helper methods
 	
@@ -154,7 +154,7 @@ final class BMZ<E> {
 			assert(m <= n);
 			this.n = n;
 			this.m = m;
-			edges = Storage.typed(long.class, ZERO_NULLITY).newStore(m);
+			edges = storage.newStore(m);
 			adjacencyList = new List[n];
 		}
 
