@@ -6,8 +6,8 @@ import com.tomgibara.bloom.Bloom;
 import com.tomgibara.bloom.BloomConfig;
 import com.tomgibara.bloom.BloomSet;
 import com.tomgibara.collect.Collect;
+import com.tomgibara.collect.Collect.Sets;
 import com.tomgibara.collect.Equivalence;
-import com.tomgibara.collect.EquivalenceCollections;
 
 class UniquenessChecker<T> {
 
@@ -15,7 +15,7 @@ class UniquenessChecker<T> {
 	private static final int BLOOM_MIN_SIZE = 256;
 
 	private final BloomConfig<T> config;
-	private final EquivalenceCollections<T>.Sets sets;
+	private final Sets<T> sets;
 
 	UniquenessChecker(long expectedObjectCount, double averageObjectSizeInBytes, Equivalence<T> equ, Class<T> type) {
 		if (expectedObjectCount < 0) throw new IllegalArgumentException("null expectedObjectCount");
@@ -28,8 +28,7 @@ class UniquenessChecker<T> {
 		int hashCount = Math.max(1, Math.round( (float) LOG_2 * bloomSize / expectedObjectCount) );
 		config = new BloomConfig<T>(bloomSize, equ.getHasher().ints(), hashCount);
 		
-		EquivalenceCollections<T> equCol = Collect.equivalence(equ);
-		sets = type == null ? equCol.setsWithGenericStorage() : equCol.setsWithTypedStorage(type);
+		sets = (type == null ? Collect.<T>sets() : Collect.setsOf(type)).underEquivalence(equ);
 	}
 
 	UniquenessChecker(long expectedObjectCount, double averageObjectSizeInBytes) {
