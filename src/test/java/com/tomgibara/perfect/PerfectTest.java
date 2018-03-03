@@ -12,8 +12,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.tomgibara.bits.BitStore.BitMatches;
@@ -136,11 +138,14 @@ public class PerfectTest {
 		for (int i = 4; i <= large.size(); i++) {
 			List<String> list = new ArrayList<>(large.subList(0, i));
 			Collections.shuffle(list, r);
+			Minimal<String> minimal;
 			try {
-				Perfect.over(list).using(3, new SecureRandom()).perfect((s, w) -> w.writeChars(s)).minimizedWithBMZ(50, 1.15);
+				minimal = Perfect.over(list).using(3, new SecureRandom()).perfect((s, w) -> w.writeChars(s)).minimizedWithBMZ(40, 1.15);
 			} catch (PerfectionException e) {
 				fail(i + " failed");
+				return;
 			}
+			confirmMinimal(minimal, list);
 		}
 	}
 
@@ -150,5 +155,15 @@ public class PerfectTest {
 			strs[i] = Integer.toString(r.nextInt(range), 10);
 		}
 		return asList(strs).stream().sorted().distinct().collect(Collectors.toList());
+	}
+
+	private void confirmMinimal(Minimal<String> minimal, List<String> list) {
+		SortedSet<Integer> set = Bits.store(list.size()).zeros().asSet();
+		Hasher<String> hasher = minimal.getHasher();
+		for (String str : list) {
+			int h = hasher.intHashValue(str);
+			if (!set.remove(h)) Assert.fail("duplicate hash value: " + h);
+		}
+		assertTrue(set.isEmpty());
 	}
 }
