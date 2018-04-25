@@ -12,6 +12,18 @@ import com.tomgibara.fundament.Mutability;
 import com.tomgibara.hashing.Hasher;
 import com.tomgibara.storage.Store;
 
+/**
+ * A set implementation that pre-allocates a bit field to record membership of
+ * keys from a hash domain. Sets of this nature are created via the
+ * {@link Minimal#newSet()} method. The set cannot contain elements outside of
+ * the hash domain.
+ *
+ * @author Tom Gibara
+ *
+ * @param <E>
+ *            the type of elements stored in the set; that of the minimal hash
+ *            domain
+ */
 public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalSet<E>> {
 
 	private final Hasher<E> hasher;

@@ -13,6 +13,20 @@ import com.tomgibara.fundament.Mutability;
 import com.tomgibara.hashing.Hasher;
 import com.tomgibara.storage.Store;
 
+/**
+ * A map implementation that pre-allocates value storage for keys over a minimal
+ * hash domain. Maps of this nature are created via the
+ * {@link Minimal.Maps#newMap()} method.
+ *
+ * @author Tom Gibara
+ *
+ * @param <K>
+ *            the type of keys stored in the map; that of the minimal hash
+ *            domain
+ * @param <V>
+ *            the type of values stored in the map
+ * @see #Minimal.Maps
+ */
 public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<MinimalMap<K,V>> {
 
 	// fields
