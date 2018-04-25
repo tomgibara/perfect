@@ -94,13 +94,13 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	@Override
 	public boolean contains(Object o) {
 		int i = indexOf(o);
-		return i == -1 ? false : bits.getBit(i);
+		return i != -1 && bits.getBit(i);
 	}
 
 	@Override
 	public boolean remove(Object o) {
 		int i = indexOf(o);
-		return i == -1 ? false : bits.getThenSetBit(i, false);
+		return i != -1 && bits.getThenSetBit(i, false);
 	}
 
 	@Override
@@ -115,8 +115,8 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	
 	@Override
 	public boolean add(E e) {
-		int i = checkedIndexOf(e);
-		return !bits.getThenSetBit(i, true);
+		int i = validIndex(hasher.intHashValue(e), e);
+		return i != -1 && !bits.getThenSetBit(i, true);
 	}
 	
 	@Override
@@ -186,15 +186,7 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 		} catch (IllegalArgumentException ex) {
 			return -1;
 		}
-		//TODO do we want to require equality
-		return store.get(i).equals(e) ? i : -1;
-	}
-	
-	private int checkedIndexOf(E e) {
-		int i = hasher.intHashValue(e);
-		//TODO do we want to require equality
-		if (!store.get(i).equals(e)) throw new IllegalArgumentException("invalid token");
-		return i;
+		return validIndex(i, e);
 	}
 	
 	private void populateArray(Object[] array, int length) {
@@ -206,4 +198,8 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 		}
 	}
 
+	private int validIndex(int i, E e) {
+		//TODO do we want to require equality
+		return i >= 0 && i < bits.size() && store.get(i).equals(e) ? i : -1;
+	}
 }

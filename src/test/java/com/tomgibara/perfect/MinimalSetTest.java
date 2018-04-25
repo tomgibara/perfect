@@ -42,12 +42,7 @@ public class MinimalSetTest {
 		assertFalse(mammals.contains("cow"));
 		mammals.remove("ant");
 		assertEquals(2, mammals.size());
-		try {
-			mammals.add("ant");
-			fail();
-		} catch (IllegalArgumentException e) {
-			/* expected */
-		}
+		assertFalse(mammals.add("ant"));
 	}
 
 	public void testSetMutability() {
