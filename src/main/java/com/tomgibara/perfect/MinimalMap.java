@@ -31,8 +31,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 	// fields
 	
-	//TODO rename
-	private final Store<K> strings;
+	private final Store<K> domain;
 	private final Hasher<K> hasher;
 	private final Store<V> store;
 	
@@ -42,9 +41,9 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	
 	// constructors
 	
-	MinimalMap(Hasher<K> hasher, Store<K> strings, Store<V> store) {
+	MinimalMap(Hasher<K> hasher, Store<K> domain, Store<V> store) {
 		this.hasher = hasher;
-		this.strings = strings;
+		this.domain = domain;
 		this.store = store;
 	}
 	
@@ -57,17 +56,17 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	
 	@Override
 	public MinimalMap<K,V> mutableCopy() {
-		return new MinimalMap<>(hasher, strings, store.mutableCopy());
+		return new MinimalMap<>(hasher, domain, store.mutableCopy());
 	}
 	
 	@Override
 	public MinimalMap<K,V> immutableCopy() {
-		return new MinimalMap<>(hasher, strings, store.immutableCopy());
+		return new MinimalMap<>(hasher, domain, store.immutableCopy());
 	}
 	
 	@Override
 	public MinimalMap<K,V> immutableView() {
-		return new MinimalMap<>(hasher, strings, store.immutable());
+		return new MinimalMap<>(hasher, domain, store.immutable());
 	}
 	
 	@Override
@@ -195,7 +194,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	}
 
 	private int indexOf(Object o) {
-		if (!strings.isSettable(o)) return -1;
+		if (!domain.isSettable(o)) return -1;
 		K k = (K) o;
 		//TODO no way to make this more efficient yet
 		int i;
@@ -205,19 +204,19 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 			return -1;
 		}
 		//TODO do we want to require equality
-		return strings.get(i).equals(k) ? i : -1;
+		return domain.get(i).equals(k) ? i : -1;
 	}
 	
 	private int checkedIndexOf(K k) {
 		int i = hasher.intHashValue(k);
 		//TODO do we want to require equality
-		if (!strings.get(i).equals(k)) throw new IllegalArgumentException("invalid token");
+		if (!domain.get(i).equals(k)) throw new IllegalArgumentException("invalid token");
 		return i;
 	}
 	
 	private int indexOfValue(Object value) {
 		if (value == null) return -1;
-		int size = strings.size();
+		int size = domain.size();
 		for (int i = 0; i < size; i++) {
 			V candidate = store.get(i);
 			if (candidate != null && candidate.equals(value)) return i;
@@ -258,7 +257,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 		@Override
 		public Iterator<K> iterator() {
-			return store.transformedIterator((i,v) -> strings.get(i));
+			return store.transformedIterator((i,v) -> domain.get(i));
 		}
 	}
 	
@@ -360,7 +359,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		
 		@Override
 		public K getKey() {
-			return strings.get(index);
+			return domain.get(index);
 		}
 		
 		@Override
