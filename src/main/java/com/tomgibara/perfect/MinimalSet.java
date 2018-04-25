@@ -43,11 +43,19 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	}
 
 	// methods
-	
+
+	/**
+	 * Adds all elements of the hash domain to the set.
+	 */
 	public void fill() {
 		bits.fill();
 	}
-	
+
+	/**
+	 * Whether the set contains all elements of the domain.
+	 *
+	 * @return true if the set contains all possible elements, false otherwise
+	 */
 	public boolean isFull() {
 		return bits.ones().isAll();
 	}
