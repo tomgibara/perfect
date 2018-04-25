@@ -118,7 +118,7 @@ public class Minimal<T> {
 	 *            the storage to be used for map values
 	 * @return maps that map domain keys to the specified storage
 	 */
-	public <V> Maps<V> withStorage(Storage<V> storage) {
+	public <V> Maps<V> mapsToStorage(Storage<V> storage) {
 		if (storage == null) throw new IllegalArgumentException("null storage");
 		return new Maps<>(storage);
 	}
@@ -129,13 +129,13 @@ public class Minimal<T> {
 	 *
 	 * @return maps that map domain keys to generic storage
 	 */
-	public <V> Maps<V> withGenericStorage() {
+	public <V> Maps<V> mapsToGenericStorage() {
 		return new Maps<>(StoreType.<V>generic().storage());
 	}
 
 	/**
 	 * A means for mapping elements of the hash domain to objects. In contrast
-	 * to the {@link #withGenericStorage()} method allows a default value to be
+	 * to the {@link #mapsToGenericStorage()} method allows a default value to be
 	 * specified, to which all keys that have not been explicitly mapped to a
 	 * different value, will be mapped. The sizes of all maps produced in this
 	 * way are that of the domain; removing keys reassigns them the default
@@ -145,7 +145,7 @@ public class Minimal<T> {
 	 *            the value automatically assigned to unmapped keys.
 	 * @return maps that map the domain keys to generic storage
 	 */
-	public <V> Maps<V> withGenericStorage(V nullValue) {
+	public <V> Maps<V> mapsToGenericStorage(V nullValue) {
 		return new Maps<>(StoreType.<V>generic().settingNullToValue(nullValue).storage());
 	}
 
@@ -157,14 +157,14 @@ public class Minimal<T> {
 	 *
 	 * @return maps that map domain keys to values of the given type
 	 */
-	public <V> Maps<V> withTypedStorage(Class<V> type) {
+	public <V> Maps<V> mapsToTypedStorage(Class<V> type) {
 		return new Maps<>(StoreType.of(type).storage());
 	}
 
 	/**
 	 * <p>
 	 * Provides for creating maps mapping elements of the hash domain to values
-	 * of an explicit type. In contrast to the {@link #withGenericStorage()}
+	 * of an explicit type. In contrast to the {@link #mapsToGenericStorage()}
 	 * method allows a default value to be specified, to which all keys that
 	 * have not been explicitly mapped to a different value, will be mapped. The
 	 * sizes of all maps produced in this way are that of the domain; removing
@@ -182,7 +182,7 @@ public class Minimal<T> {
 	 *
 	 * @return maps that map domain keys to values of the given type
 	 */
-	public <V> Maps<V> withTypedStorage(Class<V> type, V nullValue) {
+	public <V> Maps<V> mapsToTypedStorage(Class<V> type, V nullValue) {
 		return new Maps<>(StoreType.of(type).settingNullToValue(nullValue).storage());
 	}
 
@@ -225,11 +225,11 @@ public class Minimal<T> {
 	 *
 	 * @param <V>
 	 *            the type of value to which keys are mapped.
-	 * @see Minimal#withGenericStorage()
-	 * @see Minimal#withGenericStorage(Object)
-	 * @see Minimal#withStorage(Storage)
-	 * @see Minimal#withTypedStorage(Class)
-	 * @see Minimal#withTypedStorage(Class, Object)
+	 * @see Minimal#mapsToGenericStorage()
+	 * @see Minimal#mapsToGenericStorage(Object)
+	 * @see Minimal#mapsToStorage(Storage)
+	 * @see Minimal#mapsToTypedStorage(Class)
+	 * @see Minimal#mapsToTypedStorage(Class, Object)
 	 */
 	public final class Maps<V> {
 
