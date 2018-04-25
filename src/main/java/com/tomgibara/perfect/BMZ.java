@@ -112,7 +112,7 @@ final class BMZ<E> {
 
 		public HashCode hash(E e) throws IllegalArgumentException {
 			long ab = computeEdge(e);
-			int hash = g[(int) (ab >> 32)] + g[(int) ab];
+			int hash = g[a(ab)] + g[b(ab)];
 			return HashCode.fromInt(hash);
 		}
 
