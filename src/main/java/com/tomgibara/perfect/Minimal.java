@@ -21,16 +21,13 @@ import com.tomgibara.storage.StoreType;
  * @param <T>
  *            the type of values over which the minimal hash is defined
  */
-public class Minimal<T> {
+public class Minimal<T> extends DomainHash<T> {
 
-	private final Hasher<T> hasher;
-	private final PerfectDomain<T> domain;
 	private Permutation permutation = null;
 	private Store<T> store = null;
 
 	Minimal(Hasher<T> hasher, PerfectDomain<T> domain) {
-		this.hasher = hasher;
-		this.domain = domain;
+		super(hasher, domain);
 	}
 
 	// accessors

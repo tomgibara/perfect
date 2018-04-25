@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
-import com.tomgibara.collect.Equivalence;
 import com.tomgibara.hashing.Hasher;
 import com.tomgibara.storage.Store;
 
@@ -26,7 +25,7 @@ import com.tomgibara.storage.Store;
  * @param <T>
  *            the type of values over which the perfect hash is defined
  */
-public final class Perfect<T> {
+public final class Perfect<T> extends DomainHash<T> {
 
 	/**
 	 * Creates a domain of values over which a perfect hash can be defined from
@@ -124,53 +123,11 @@ public final class Perfect<T> {
 
 	}
 
-	private final Hasher<T> hasher;
-	private final PerfectDomain<T> domain;
 	private final Random random;
-	private Equivalence<T> equ = null;
 	
 	Perfect(Hasher<T> hasher, PerfectDomain<T> domain, Random random) {
-		this.hasher = hasher;
-		this.domain = domain;
+		super(hasher, domain);
 		this.random = random;
-	}
-
-	/**
-	 * A hash that is perfect over its domain.
-	 *
-	 * @return a perfect hasher
-	 */
-	public Hasher<T> getHasher() {
-		return hasher;
-	}
-
-	/**
-	 * An equivalence relation derived from the perfect hash. This provides an
-	 * definition of equivalence over the values in the domain that is
-	 * guaranteed to be consistent with the perfect hash; two values being
-	 * considered equal if their hash codes are equal.
-	 *
-	 * @return an equivalence relation consistent with the perfect hash
-	 */
-	//TODO need to make this available on Minimal too
-	public Equivalence<T> getEquivalence() {
-		if (equ == null) {
-			equ = new Equivalence<T>() {
-				@Override public boolean isEquivalent(T e1, T e2) { return e1 == e2 || hasher.intHashValue(e1) == hasher.intHashValue(e2); };
-				@Override public Hasher<T> getHasher() { return hasher; }
-			};
-		}
-		return equ;
-	}
-
-	/**
-	 * The domain over which the hash returned by {@link #getHasher()} is
-	 * guaranteed to be perfect.
-	 *
-	 * @return the domain of values
-	 */
-	public PerfectDomain<T> getDomain() {
-		return domain;
 	}
 
 	/**
