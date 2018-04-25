@@ -43,5 +43,20 @@ public class MinimalMapTest {
 		assertEquals((Integer) 1, legs.get("snail"));
 		assertEquals(2, legs.size());
 	}
-	
+
+	@Test
+	public void testDefaultedPrimitive() {
+		String[] animals = { "ostrich", "dog", "snail", "centipede" };
+		Minimal<String> minimal = Perfect.over(animals).usingDefaults().maybePerfect().get().minimized();
+		MinimalMap<String, Integer> map = minimal.withTypedStorage(int.class, 0).newMap();
+		assertEquals(4, map.size());
+		for (String animal : animals) {
+			assertEquals(0, map.get(animal).intValue());
+		}
+		map.put("ostrich", 2);
+		map.put("dog", 4);
+		assertEquals(4, map.get("dog").intValue());
+		assertEquals(4, map.remove("dog").intValue());
+		assertEquals(0, map.remove("dog").intValue());
+	}
 }
