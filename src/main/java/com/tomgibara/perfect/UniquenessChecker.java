@@ -21,13 +21,13 @@ class UniquenessChecker<T> {
 		if (expectedObjectCount < 0) throw new IllegalArgumentException("null expectedObjectCount");
 		if (averageObjectSizeInBytes <= 0.0) throw new IllegalArgumentException("non-positive averageObjectSizeInBytes");
 		if (equ == null) throw new IllegalArgumentException("null equ");
-		
+
 		double bitsPerObject = 8.0 * averageObjectSizeInBytes;
 		double optimalBloomSize = expectedObjectCount * Math.log( bitsPerObject * LOG_2 * LOG_2 ) / LOG_2;
 		int bloomSize = Math.max(BLOOM_MIN_SIZE, (int) Math.min(Integer.MAX_VALUE, optimalBloomSize));
 		int hashCount = Math.max(1, Math.round( (float) LOG_2 * bloomSize / expectedObjectCount) );
-		config = new BloomConfig<T>(bloomSize, equ.getHasher().ints(), hashCount);
-		
+		config = new BloomConfig<>(bloomSize, equ.getHasher().ints(), hashCount);
+
 		sets = (type == null ? Collect.<T>sets() : Collect.setsOf(type)).underEquivalence(equ);
 	}
 

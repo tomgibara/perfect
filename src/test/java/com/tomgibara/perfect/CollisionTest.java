@@ -1,9 +1,7 @@
 package com.tomgibara.perfect;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 import com.tomgibara.hashing.HashSize;
 import com.tomgibara.hashing.Hasher;
@@ -20,11 +18,6 @@ public class CollisionTest {
 		for (int i = 0; i < count; i++) {
 			hashes[i] = hasher.intHashValue(r.nextInt());
 		}
-//		Set<Integer> set = new HashSet<Integer>();
-//		for (int hash : hashes) {
-//			set.add(hash);
-//		}
-//		System.out.println(count - set.size());
 		Arrays.sort(hashes);
 		int[] uniques = new int[count];
 		for (int i = 0; i < hashes.length - 1; i++) {
@@ -37,7 +30,7 @@ public class CollisionTest {
 			int u = h1 & m;
 			uniques[i] = u;
 		}
-		
+
 		int[] errors = new int[count];
 		for (int i = 0; i < count; i++) {
 			long x = (1L << 24) * i / (count - 1);
@@ -49,5 +42,5 @@ public class CollisionTest {
 		}
 
 	}
-	
+
 }

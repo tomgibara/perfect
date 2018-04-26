@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class MinimalSetTest {
@@ -21,7 +20,7 @@ public class MinimalSetTest {
 		assertEquals(4, mammals.size());
 		assertTrue(mammals.contains("dog"));
 		assertFalse(mammals.contains("ant"));
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		for (String mammal : mammals) {
 			set.add(mammal);
 		}

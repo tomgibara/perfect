@@ -29,13 +29,13 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	private final Hasher<E> hasher;
 	private final Store<E> store;
 	private final BitStore bits;
-	
+
 	MinimalSet(Minimal<E> minimal) {
 		hasher = minimal.getHasher();
 		store = minimal.getStore();
 		bits = Bits.store(store.size());
 	}
-	
+
 	private MinimalSet(Hasher<E> hasher, Store<E> store, BitStore bits) {
 		this.hasher = hasher;
 		this.store = store;
@@ -61,12 +61,12 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	}
 
 	// mutability
-	
+
 	@Override
 	public boolean isMutable() {
 		return bits.isMutable();
 	}
-	
+
 	@Override
 	public MinimalSet<E> mutable() {
 		return isMutable() ? this : mutableCopy();
@@ -76,29 +76,29 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	public MinimalSet<E> immutable() {
 		return isMutable() ? immutableView() : this;
 	}
-	
+
 	@Override
 	public MinimalSet<E> mutableCopy() {
 		return new MinimalSet<>(hasher, store, bits.mutableCopy());
 	}
-	
+
 	@Override
 	public MinimalSet<E> immutableCopy() {
 		return new MinimalSet<>(hasher, store, bits.immutableCopy());
 	}
-	
+
 	@Override
 	public MinimalSet<E> immutableView() {
 		return new MinimalSet<>(hasher, store, bits.immutable());
 	}
 
 	// set
-	
+
 	@Override
 	public int size() {
 		return bits.ones().count();
 	}
-	
+
 	@Override
 	public boolean contains(Object o) {
 		int i = indexOf(o);
@@ -115,18 +115,18 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	public void clear() {
 		bits.clear();
 	}
-	
+
 	@Override
 	public boolean isEmpty() {
 		return bits.zeros().isAll();
 	}
-	
+
 	@Override
 	public boolean add(E e) {
 		int i = validIndex(hasher.intHashValue(e), e);
 		return i != -1 && !bits.getThenSetBit(i, true);
 	}
-	
+
 	@Override
 	public Object[] toArray() {
 		int length = size();
@@ -150,7 +150,7 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 		populateArray(array, length);
 		return (T[]) array;
 	}
-	
+
 	@Override
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
@@ -160,7 +160,7 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 			@Override public void remove() { positions.remove(); }
 		};
 	}
-	
+
 	@Override
 	public boolean removeIf(Predicate<? super E> filter) {
 		boolean modified = false;
@@ -170,24 +170,24 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 			if (filter.test(e)) {
 				modified = bits.getThenSetBit(p, false) || modified;
 			}
-			
+
 		}
 		return modified;
 	}
-	
+
 	@Override
 	public void forEach(Consumer<? super E> action) {
 		for (Positions ps = bits.ones().positions(); ps.hasNext(); ) {
 			action.accept(store.get(ps.nextPosition()));
 		}
 	}
-	
+
 	// private utility methods
-	
+
 	private int indexOf(Object o) {
 		if (!store.isSettable(o)) return -1;
+		@SuppressWarnings("unchecked")
 		E e = (E) o;
-		//TODO no way to make this more efficient yet
 		int i;
 		try {
 			i = hasher.intHashValue(e);
@@ -196,7 +196,7 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 		}
 		return validIndex(i, e);
 	}
-	
+
 	private void populateArray(Object[] array, int length) {
 		for (Positions ps = bits.ones().positions(); ps.nextIndex() < length && ps.hasNext(); ) {
 			// order important here, nextIndex first because nextPosition advances
@@ -207,7 +207,6 @@ public class MinimalSet<E> extends AbstractSet<E> implements Mutability<MinimalS
 	}
 
 	private int validIndex(int i, E e) {
-		//TODO do we want to require equality
 		return i >= 0 && i < bits.size() && store.get(i).equals(e) ? i : -1;
 	}
 }

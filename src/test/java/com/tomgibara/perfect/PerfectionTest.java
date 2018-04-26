@@ -25,14 +25,14 @@ public class PerfectionTest {
 			Iterable<Integer> iterable = stream::iterator;
 			assertTrue( Perfect.over(iterable).isPerfect(h) );
 		}
-		
+
 		{
 			IntStream stream = IntStream.rangeClosed(0, 1 << PerfectDomain.COMPACT_BIT_CUTOFF);
 			Iterable<Integer> iterable = stream::iterator;
 			assertFalse( Perfect.over(iterable).isPerfect(h) );
 		}
 	}
-	
+
 	@Test
 	public void testLarge() {
 		Hasher<Long> h = Hashing.<Long>objectHasher();

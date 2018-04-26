@@ -61,7 +61,7 @@ public class PerfectTest {
 		assertTrue( Perfect.over("FB", "Ea").isInjective((s,w) -> w.writeChars(s)) );
 		assertTrue( Perfect.over("FB", "Ea").isInjective((s,w) -> w.writeChar(s.charAt(0))) );
 		assertFalse( Perfect.over("Ant", "Bear", "Aardvark").isInjective((s,w) -> w.writeChar(s.charAt(0))) );
-		
+
 		Minimal<String> minimal = Perfect.over("FB", "Ea").usingDefaults().perfect((s,w) -> w.writeChars(s)).minimized();
 		minimal.getPermutation();
 		Hasher<String> hasher = minimal.getHasher();
@@ -71,7 +71,7 @@ public class PerfectTest {
 		assertTrue(hb == 0 || hb == 1);
 		assertFalse(ha == hb);
 	}
-	
+
 	@Test
 	public void testLargePerfect() {
 		for (long seed = 0; seed < 10; seed++) {
@@ -79,9 +79,9 @@ public class PerfectTest {
 			List<String> list = largeList(10000, 100000000, r);
 			assertTrue( Perfect.over(list).usingDefaults().maybePerfect().isPresent() );
 		}
-		
+
 	}
-	
+
 	@Test
 	public void testDomainCons() {
 		PerfectDomain<Number> domain = Perfect.over(Integer.MIN_VALUE, Integer.MAX_VALUE);
@@ -99,20 +99,10 @@ public class PerfectTest {
 	}
 
 	private void testMinimalStorage(boolean storeFirst) {
-		//String[] words = { "Alice", "Bob", "Eve", "Zachary" };
 		String[] words = { "Alice", "Bob", "Eve" };
 		Perfect<String> perfect = Perfect.over(words).using(3, new Random(0L)).perfect((s, w) -> w.writeChars(s));
-//		System.out.println(".-= Perfect =-.");
-//		Hasher<String> ph = perfect.getHasher();
-//		for (String word : words) {
-//			System.out.println(word + " -> " + ph.intHashValue(word));
-//		}
-//		System.out.println(".-= Minimal =-.");
 		Minimal<String> minimal = perfect.minimized();
 		Hasher<String> mh = minimal.getHasher();
-//		for (String word : words) {
-//			System.out.println(word + " -> " + mh.intHashValue(word));
-//		}
 		Store<String> store;
 		Permutation perm;
 		if (storeFirst) {

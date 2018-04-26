@@ -184,7 +184,7 @@ public class Minimal<T> extends DomainHash<T> {
 	}
 
 	// private utility methods
-	
+
 	private void populate() {
 		Collection<? extends T> values = domain.getValues();
 		int count = 0;

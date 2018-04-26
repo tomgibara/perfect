@@ -30,89 +30,89 @@ import com.tomgibara.storage.Store;
 public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<MinimalMap<K,V>> {
 
 	// fields
-	
+
 	private final Store<K> domain;
 	private final Hasher<K> hasher;
 	private final Store<V> store;
-	
+
 	private Entries entries = null;
 	private Keys keys = null;
 	private Values values = null;
-	
+
 	// constructors
-	
+
 	MinimalMap(Hasher<K> hasher, Store<K> domain, Store<V> store) {
 		this.hasher = hasher;
 		this.domain = domain;
 		this.store = store;
 	}
-	
+
 	// mutability
-	
+
 	@Override
 	public boolean isMutable() {
 		return store.isMutable();
 	}
-	
+
 	@Override
 	public MinimalMap<K,V> mutableCopy() {
 		return new MinimalMap<>(hasher, domain, store.mutableCopy());
 	}
-	
+
 	@Override
 	public MinimalMap<K,V> immutableCopy() {
 		return new MinimalMap<>(hasher, domain, store.immutableCopy());
 	}
-	
+
 	@Override
 	public MinimalMap<K,V> immutableView() {
 		return new MinimalMap<>(hasher, domain, store.immutable());
 	}
-	
+
 	@Override
 	public MinimalMap<K,V> mutable() {
 		return isMutable() ? this : mutableCopy();
 	}
-	
+
 	@Override
 	public MinimalMap<K,V> immutable() {
 		return isMutable() ? immutableView() : this;
 	}
-	
+
 	// map
-	
+
 	@Override
 	public int size() {
 		return store.count();
 	}
-	
+
 	@Override
 	public void clear() {
 		store.clear();
 	}
-	
+
 	@Override
 	public boolean containsKey(Object key) {
 		int i = indexOf(key);
 		return i != -1 && !store.isNull(i);
 	}
-	
+
 	@Override
 	public boolean containsValue(Object value) {
 		return indexOfValue(value) != -1;
 	}
-	
+
 	@Override
 	public boolean isEmpty() {
 		return store.count() == 0;
 	}
-	
+
 	@Override
 	public V get(Object key) {
 		int i = indexOf(key);
 		return i == -1 ? null : store.get(i);
 	}
-	
+
 	@Override
 	public V getOrDefault(Object key, V defaultValue) {
 		int i = indexOf(key);
@@ -120,7 +120,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		V value = store.get(i);
 		return value == null ? defaultValue : value;
 	}
-	
+
 	@Override
 	public V remove(Object key) {
 		int i = indexOf(key);
@@ -129,7 +129,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		if (value != null) store.set(i, null);
 		return value;
 	}
-	
+
 	@Override
 	public boolean remove(Object key, Object value) {
 		if (value == null) return false;
@@ -140,7 +140,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		store.set(i, null);
 		return true;
 	}
-	
+
 	@Override
 	public V put(K key, V value) {
 		if (value == null) throw new IllegalArgumentException("null value");
@@ -167,7 +167,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		store.set(i, value);
 		return previous;
 	}
-	
+
 	@Override
 	public boolean replace(K key, V oldValue, V newValue) {
 		if (newValue == null) throw new IllegalArgumentException("null newValue");
@@ -182,12 +182,12 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	public Set<Map.Entry<K, V>> entrySet() {
 		return entries == null ? entries = new Entries() : entries;
 	}
-	
+
 	@Override
 	public Set<K> keySet() {
 		return keys == null ? keys = new Keys() : keys;
 	}
-	
+
 	@Override
 	public Collection<V> values() {
 		return values == null ? values = new Values() : values;
@@ -195,6 +195,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 	private int indexOf(Object o) {
 		if (!domain.isSettable(o)) return -1;
+		@SuppressWarnings("unchecked")
 		K k = (K) o;
 		//TODO no way to make this more efficient yet
 		int i;
@@ -203,16 +204,14 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		} catch (IllegalArgumentException e) {
 			return -1;
 		}
-		//TODO do we want to require equality
 		return i >= 0 && i < domain.size() && domain.get(i).equals(k) ? i : -1;
 	}
-	
+
 	private int checkedIndexOf(K k) {
 		int i = hasher.intHashValue(k);
-		//TODO do we want to require equality
 		return i >= 0 && i < domain.size() && domain.get(i).equals(k) ? i : -1;
 	}
-	
+
 	private int indexOfValue(Object value) {
 		if (value == null) return -1;
 		int size = domain.size();
@@ -224,27 +223,27 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 	}
 
 	private final class Keys extends AbstractSet<K> {
-		
+
 		@Override
 		public int size() {
 			return store.count();
 		}
-		
+
 		@Override
 		public boolean isEmpty() {
 			return store.count() != 0;
 		}
-		
+
 		@Override
 		public boolean contains(Object o) {
 			return containsKey(o);
 		}
-		
+
 		@Override
 		public void clear() {
 			store.clear();
 		}
-		
+
 		@Override
 		public boolean remove(Object o) {
 			int i = indexOf(o);
@@ -259,29 +258,29 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 			return store.transformedIterator((i,v) -> domain.get(i));
 		}
 	}
-	
+
 	private final class Values extends AbstractCollection<V> {
 
 		@Override
 		public int size() {
 			return store.count();
 		}
-		
+
 		@Override
 		public boolean isEmpty() {
 			return store.count() == 0;
 		}
-		
+
 		@Override
 		public void clear() {
 			store.clear();
 		}
-		
+
 		@Override
 		public boolean contains(Object o) {
 			return containsValue(o);
 		}
-		
+
 		@Override
 		public boolean remove(Object o) {
 			int i = indexOfValue(o);
@@ -296,19 +295,19 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 		}
 
 	}
-	
+
 	private final class Entries extends AbstractSet<Entry<K, V>> {
-		
+
 		@Override
 		public int size() {
 			return store.count();
 		}
-		
+
 		@Override
 		public boolean isEmpty() {
 			return store.count() == 0;
 		}
-		
+
 		@Override
 		public boolean contains(Object o) {
 			if (!(o instanceof Entry)) return false;
@@ -320,7 +319,7 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 			if (v == null) return false;
 			return v.equals(e.getValue());
 		}
-		
+
 		@Override
 		public boolean remove(Object o) {
 			if (!(o instanceof Entry)) return false;
@@ -337,35 +336,34 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 
 		@Override
 		public Iterator<Entry<K, V>> iterator() {
-			//TODO could just iterate over positions?
 			return store.transformedIterator((i,k) -> new MinimalEntry(i));
 		}
-		
+
 		@Override
 		public void clear() {
 			store.clear();
 		}
-		
+
 	}
-	
+
 	final private class MinimalEntry extends AbstractMapEntry<K, V> {
-		
+
 		private final int index;
-		
+
 		MinimalEntry(int index) {
 			this.index = index;
 		}
-		
+
 		@Override
 		public K getKey() {
 			return domain.get(index);
 		}
-		
+
 		@Override
 		public V getValue() {
 			return store.get(index);
 		}
-		
+
 		@Override
 		public V setValue(V value) {
 			if (value == null) throw new IllegalArgumentException("null value");

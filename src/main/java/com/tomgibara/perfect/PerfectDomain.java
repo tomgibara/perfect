@@ -27,17 +27,17 @@ import com.tomgibara.streams.Streams;
 public class PerfectDomain<T> {
 
 	// statics
-	
+
 	private static final int MAX_SEED_ATTEMPTS = 3;
 	static final int COMPACT_BIT_CUTOFF = 16;
 
 	// fields
-	
+
 	private final Collection<? extends T> values;
 	private final Class<T> type;
 
 	// constructors
-	
+
 	PerfectDomain(Collection<? extends T> values, Class<T> type) {
 		this.values = values;
 		this.type = type;
@@ -95,10 +95,10 @@ public class PerfectDomain<T> {
 			return true;
 		}
 		// fall back to a uniqueness check - still highly memory efficient
-		Iterable<BigInteger> iterable = () -> new HashIterator<T>(values.iterator(), hasher);
+		Iterable<BigInteger> iterable = () -> new HashIterator<>(values.iterator(), hasher);
 		int sizeEstimate = (11 + (size.getBits() + 31 >> 5)) << 2;
 		int itemCount = values.size();
-		UniquenessChecker<BigInteger> checker = new UniquenessChecker<BigInteger>(itemCount, sizeEstimate, Equivalence.equality(), BigInteger.class);
+		UniquenessChecker<BigInteger> checker = new UniquenessChecker<>(itemCount, sizeEstimate, Equivalence.equality(), BigInteger.class);
 		return checker.check(iterable);
 	}
 
@@ -122,10 +122,10 @@ public class PerfectDomain<T> {
 
 	public boolean isInjective(StreamSerializer<T> serializer) {
 		if (serializer == null) throw new IllegalArgumentException("null serializer");
-		Iterable<byte[]> iterable = () -> new BytesIterator<T>(values.iterator(), serializer);
+		Iterable<byte[]> iterable = () -> new BytesIterator<>(values.iterator(), serializer);
 		int sizeEstimate = 50;
 		int itemCount = values.size();
-		UniquenessChecker<byte[]> checker = new UniquenessChecker<byte[]>(itemCount, sizeEstimate, Equivalence.bytes(), byte[].class);
+		UniquenessChecker<byte[]> checker = new UniquenessChecker<>(itemCount, sizeEstimate, Equivalence.bytes(), byte[].class);
 		return checker.check(iterable);
 	}
 
@@ -138,7 +138,7 @@ public class PerfectDomain<T> {
 	 */
 
 	public Perfectionist<T> usingDefaults() {
-		return new Perfectionist<T>(this, MAX_SEED_ATTEMPTS, new Random());
+		return new Perfectionist<>(this, MAX_SEED_ATTEMPTS, new Random());
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class PerfectDomain<T> {
 	 */
 
 	public Perfectionist<T> using(int maxSeedAttempts, Random random) {
-		return new Perfectionist<T>(this, maxSeedAttempts, random);
+		return new Perfectionist<>(this, maxSeedAttempts, random);
 	}
 
 	// inner classes

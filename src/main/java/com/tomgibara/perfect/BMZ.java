@@ -25,11 +25,11 @@ import com.tomgibara.streams.StreamSerializer;
 final class BMZ<E> {
 
 	// statics
-	
+
 	private static final Storage<Long> storage = StoreType.of(long.class).settingNullToDefault().storage();
 
 	// static helper methods
-	
+
 	private static int a(long ab) {
 		return (int) (ab >> 32);
 	}
@@ -43,21 +43,21 @@ final class BMZ<E> {
 	}
 
 	// fields
-	
+
 	private final Random random;
 	private final Hasher<E> hasher;
 	private final int maxTries;
 	private final double c;
-	
+
 	// constructors
-	
+
 	BMZ(Hasher<E> hasher, int maxTries, double c, Random random) {
 		this.hasher = hasher;
 		this.maxTries = maxTries;
 		this.c = c;
 		this.random = random;
 	}
-	
+
 	Hasher<E> create(Collection<? extends E> elements) {
 		long max = (long) Math.ceil(c * elements.size());
 		if (max > Integer.MAX_VALUE) throw new IllegalArgumentException("elements too large");
@@ -66,7 +66,7 @@ final class BMZ<E> {
 		for (int tries = 0; tries < maxTries; tries++) {
 			int seed1 = random.nextInt();
 			int seed2 = random.nextInt();
-			BMZHasher<E> bmz = new BMZHasher<E>(hasher, seed1, seed2, g, elements.size());
+			BMZHasher<E> bmz = new BMZHasher<>(hasher, seed1, seed2, g, elements.size());
 
 			Graph graph = bmz.computeGraph(elements);
 			if (graph == null) continue; // duplicate edge detected
@@ -85,10 +85,8 @@ final class BMZ<E> {
 	private static class BMZHasher<E> implements Hasher<E> {
 
 		private static final StreamSerializer<Integer> ser =  (i, w) -> w.writeInt(i);
-		
+
 		private final Hasher<E> hasher;
-		private final int seed1;
-		private final int seed2;
 		private final int[] g;
 		private final HashSize size;
 
@@ -97,8 +95,6 @@ final class BMZ<E> {
 
 		BMZHasher(Hasher<E> hasher, int seed1, int seed2, int[] g, int size) {
 			this.hasher = hasher;
-			this.seed1 = seed1;
-			this.seed2 = seed2;
 			this.g = g;
 			this.size = HashSize.fromInt(size);
 			HashSize vertices = HashSize.fromInt(g.length);
@@ -147,9 +143,9 @@ final class BMZ<E> {
 		// the two vertices are packed into a long
 		final Store<Long> edges;
 		// indexed by vertex, holds list of vertices that vertex is connected to
-		//TODO want storage based lists for efficient primitive storage
 		final List<Integer>[] adjacencyList;
 
+		@SuppressWarnings("unchecked")
 		Graph(int n, int m) {
 			assert(m <= n);
 			this.n = n;
@@ -170,13 +166,6 @@ final class BMZ<E> {
 		}
 
 		Assigner newAssigner(int[] g) {
-//			int max = 0;
-//			for (int i = 0; i < n; i++) {
-//				List<Integer> list = adjacencyList[i];
-//				int len = list == null ? 0 : list.size();
-//				if (len > max) max = len;
-//			}
-//			System.out.println(n + " -> " + max);
 			return new Assigner(g);
 		}
 
@@ -184,16 +173,16 @@ final class BMZ<E> {
 
 		private List<Integer> getAdjacencyList(int forVertex) {
 			List<Integer> ret = adjacencyList[forVertex];
-			return ret == null ? (adjacencyList[forVertex] = new LinkedList<Integer>()) : ret;
+			return ret == null ? (adjacencyList[forVertex] = new LinkedList<>()) : ret;
 		}
 
 		// inner inner classes
-		
+
 		private class Assigner {
 
 			// values assigned to each of the edges (has length m)
 			private final int[] g;
-			// those nodes that can't be linearized 
+			// those nodes that can't be linearized
 			//(ie. have degree greater than 2 or are in cycles)
 			private final BitVector criticalNodes;
 			// records the edges that have been assigned a value
@@ -221,7 +210,7 @@ final class BMZ<E> {
 				}
 
 				// ...and trim the chains...
-				List<Integer> degreeOne = new LinkedList<Integer>();
+				List<Integer> degreeOne = new LinkedList<>();
 				for (int i = 0; i < n; ++i) {
 					if (degrees[i] == 1) degreeOne.add(i);
 				}
@@ -242,7 +231,7 @@ final class BMZ<E> {
 			/** @returns false if we couldn't assign the integers */
 			private boolean assignIntegersToCriticalVertices() {
 				int x = 0;
-				List<Integer> toProcess = new LinkedList<Integer>(); 
+				List<Integer> toProcess = new LinkedList<>();
 				BitVector assignedNodes = new BitVector(g.length);
 				while (!assignedNodes.equals(criticalNodes)) {
 					BitStore unprocessed = Operation.AND.stores(criticalNodes, assignedNodes.flipped());
@@ -262,11 +251,11 @@ final class BMZ<E> {
 					if(adjacencyList[v] != null) {
 						x = getXThatSatifies(adjacencyList[v], x, assignedNodes);
 						for (int adjacent : adjacencyList[v]) {
-							if(!assignedNodes.getBit(adjacent) && criticalNodes.getBit(adjacent) && v!= adjacent) { 
-								// give this one an integer, & note we shouldn't have loops - except if there is one key 
-								toProcess.add(adjacent); 
+							if(!assignedNodes.getBit(adjacent) && criticalNodes.getBit(adjacent) && v!= adjacent) {
+								// give this one an integer, & note we shouldn't have loops - except if there is one key
+								toProcess.add(adjacent);
 							}
-							if(assignedNodes.getBit(adjacent)) {  
+							if(assignedNodes.getBit(adjacent)) {
 								int edgeXtoAdjacent = x + g[adjacent]; // if x is ok, then this edge is now taken
 								if(edgeXtoAdjacent >= edges.size()) return -1; // this edge is too big! we're only assigning between 0 & m-1
 								assignedEdges.setBit(edgeXtoAdjacent, true);
@@ -280,7 +269,7 @@ final class BMZ<E> {
 			}
 
 			private void assignIntegersToNonCriticalVertices() {
-				List<Integer> toProcess = new LinkedList<Integer>( criticalNodes.ones().asSet() );
+				List<Integer> toProcess = new LinkedList<>( criticalNodes.ones().asSet() );
 				BitVector visited = criticalNodes.clone();
 				processNonCriticalNodes(toProcess, visited); // process the critical nodes
 				// we've done everything reachable from the critical nodes - but
@@ -300,7 +289,7 @@ final class BMZ<E> {
 					if(v < 0) continue; // there are no critical nodes
 					if(adjacencyList[v] != null) {
 						for(int adjacent : adjacencyList[v]) {
-							if(!visited.getBit(adjacent) && v != adjacent) { // shouldn't have loops - only if one key 
+							if(!visited.getBit(adjacent) && v != adjacent) { // shouldn't have loops - only if one key
 								// we must give it a value
 								g[adjacent] = nextEdge - g[v]; // i.e. g[v] + g[a] = edge as needed
 								toProcess.add(adjacent);

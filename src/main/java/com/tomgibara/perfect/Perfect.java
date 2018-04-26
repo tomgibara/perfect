@@ -76,7 +76,7 @@ public final class Perfect<T> extends DomainHash<T> {
 
 	public static <T> PerfectDomain<T> over(T... values) {
 		if (values == null) throw new IllegalArgumentException("null values");
-		return new PerfectDomain<T>(Arrays.asList(values), (Class<T>) values.getClass().getComponentType());
+		return new PerfectDomain<>(Arrays.asList(values), (Class<T>) values.getClass().getComponentType());
 	}
 
 	/**
@@ -134,7 +134,7 @@ public final class Perfect<T> extends DomainHash<T> {
 		public int size() {
 			if (size < 0) {
 				int count = 0;
-				for (E value : iterable) count ++;
+				for (@SuppressWarnings("unused") E value : iterable) count ++;
 				size = count;
 			}
 			return size;
@@ -143,7 +143,7 @@ public final class Perfect<T> extends DomainHash<T> {
 	}
 
 	private final Random random;
-	
+
 	Perfect(Hasher<T> hasher, PerfectDomain<T> domain, Random random) {
 		super(hasher, domain);
 		this.random = random;
@@ -198,7 +198,7 @@ public final class Perfect<T> extends DomainHash<T> {
 	}
 
 	private Minimal<T> createMinimized(int maxAttempts, double c) throws PerfectionException {
-		Hasher<T> h = new BMZ<T>(hasher, maxAttempts, c, random).create(domain.getValues());
+		Hasher<T> h = new BMZ<>(hasher, maxAttempts, c, random).create(domain.getValues());
 		return new Minimal<>(h, domain);
 	}
 }
