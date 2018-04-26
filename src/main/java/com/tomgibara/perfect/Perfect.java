@@ -34,6 +34,8 @@ public final class Perfect<T> extends DomainHash<T> {
 	 * values concurrently in memory. Note that the iterable <i>must</i> return
 	 * a consistent set of objects on each call.
 	 *
+	 * @param <T>
+	 *            the type of values in the domain
 	 * @param values
 	 *            iterable access to the domain values
 	 * @return a domain over the supplied values
@@ -51,6 +53,8 @@ public final class Perfect<T> extends DomainHash<T> {
 	 * reduced memory usage for domains over primitive types (eg. using
 	 * long.class) and may yield greater type safety.
 	 *
+	 * @param <T>
+	 *            the type of values in the domain
 	 * @param values
 	 *            iterable access to the domain values
 	 * @param type
@@ -69,6 +73,8 @@ public final class Perfect<T> extends DomainHash<T> {
 	 * the supplied array is <i>not</i> copied; the array should not be modified
 	 * after being supplied to this method.
 	 *
+	 * @param <T>
+	 *            the type of values in the domain
 	 * @param values
 	 *            an array of the domain values
 	 * @return a domain over the supplied values
@@ -85,6 +91,8 @@ public final class Perfect<T> extends DomainHash<T> {
 	 * domains, the supplied collection is <i>not</i> copied; the collection
 	 * should not be modified after being supplied to this method.
 	 *
+	 * @param <T>
+	 *            the type of values in the domain
 	 * @param values
 	 *            an collection of the domain values
 	 * @return a domain over the supplied values
@@ -102,6 +110,8 @@ public final class Perfect<T> extends DomainHash<T> {
 	 * domains, the supplied store is <i>not</i> copied; the store should not be
 	 * modified after being supplied to this method.
 	 *
+	 * @param <T>
+	 *            the type of values in the domain
 	 * @param values
 	 *            an collection of the domain values
 	 * @return a domain over the supplied values

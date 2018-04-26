@@ -25,7 +25,7 @@ import com.tomgibara.storage.Store;
  *            domain
  * @param <V>
  *            the type of values stored in the map
- * @see #Minimal.Maps
+ * @see Minimal.Maps
  */
 public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<MinimalMap<K,V>> {
 

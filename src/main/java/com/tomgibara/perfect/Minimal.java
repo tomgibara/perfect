@@ -14,7 +14,7 @@ import com.tomgibara.storage.StoreType;
  *
  * The hasher returned by this {@link #getHasher()} is guaranteed to be both
  * perfect over its domain and minimal. In this context, minimal means that for
- * a domain of size <i>n<i> the hash value is in the range [0,<i>n</i>].
+ * a domain of size <i>n</i> the hash value is in the range [0,<i>n</i>].
  *
  * @author Tom Gibara
  *
@@ -53,7 +53,7 @@ public class Minimal<T> extends DomainHash<T> {
 
 	/**
 	 * The permutation induced by this minimal hash. The returned permutation
-	 * has the characteristic that n -> m iff the hash of the domain element at
+	 * has the characteristic that n -&gt; m iff the hash of the domain element at
 	 * index n is m.
 	 *
 	 * @return the permutation of the domain induced by the hash.
@@ -111,6 +111,8 @@ public class Minimal<T> extends DomainHash<T> {
 	 * A means for creating maps mapping elements of the hash domain to the
 	 * specified storage.
 	 *
+	 * @param <V>
+	 *            the type of value to which domain values will be mapped
 	 * @param storage
 	 *            the storage to be used for map values
 	 * @return maps that map domain keys to the specified storage
@@ -121,9 +123,10 @@ public class Minimal<T> extends DomainHash<T> {
 	}
 
 	/**
-	 * A means for creating maps mapping elements of the hash domain to
-	 * objects.
+	 * A means for creating maps mapping elements of the hash domain to objects.
 	 *
+	 * @param <V>
+	 *            the type of value to which domain values will be mapped
 	 * @return maps that map domain keys to generic storage
 	 */
 	public <V> Maps<V> mapsToGenericStorage() {
@@ -138,6 +141,8 @@ public class Minimal<T> extends DomainHash<T> {
 	 * way are that of the domain; removing keys reassigns them the default
 	 * value and leaves the map size unchanged.
 	 *
+	 * @param <V>
+	 *            the type of value to which domain values will be mapped
 	 * @param nullValue
 	 *            the value automatically assigned to unmapped keys.
 	 * @return maps that map the domain keys to generic storage
@@ -152,6 +157,8 @@ public class Minimal<T> extends DomainHash<T> {
 	 * (eg. {@code int.class}) in which case key storage will be backed by
 	 * primitive arrays. This can be important for reducing memory usage.
 	 *
+	 * @param <V>
+	 *            the type of value to which domain values will be mapped
 	 * @return maps that map domain keys to values of the given type
 	 */
 	public <V> Maps<V> mapsToTypedStorage(Class<V> type) {
@@ -177,6 +184,8 @@ public class Minimal<T> extends DomainHash<T> {
 	 * be accumulated over a large domain using approximately 4 bytes per key
 	 * and avoids all non-boxing allocations.
 	 *
+	 * @param <V>
+	 *            the type of value to which domain values will be mapped
 	 * @return maps that map domain keys to values of the given type
 	 */
 	public <V> Maps<V> mapsToTypedStorage(Class<V> type, V nullValue) {
