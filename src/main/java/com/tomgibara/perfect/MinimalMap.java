@@ -204,14 +204,13 @@ public class MinimalMap<K,V> extends AbstractMap<K, V> implements Mutability<Min
 			return -1;
 		}
 		//TODO do we want to require equality
-		return domain.get(i).equals(k) ? i : -1;
+		return i >= 0 && i < domain.size() && domain.get(i).equals(k) ? i : -1;
 	}
 	
 	private int checkedIndexOf(K k) {
 		int i = hasher.intHashValue(k);
 		//TODO do we want to require equality
-		if (!domain.get(i).equals(k)) throw new IllegalArgumentException("invalid token");
-		return i;
+		return i >= 0 && i < domain.size() && domain.get(i).equals(k) ? i : -1;
 	}
 	
 	private int indexOfValue(Object value) {
