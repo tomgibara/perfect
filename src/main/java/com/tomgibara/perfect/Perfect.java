@@ -38,10 +38,29 @@ public final class Perfect<T> extends DomainHash<T> {
 	 *            iterable access to the domain values
 	 * @return a domain over the supplied values
 	 */
-	//TODO need constructions with type
 	public static <T> PerfectDomain<T> over(Iterable<? extends T> values) {
 		if (values == null) throw new IllegalArgumentException("null values");
 		return new PerfectDomain<>(new AdaptedCollection<>(values), null);
+	}
+
+	/**
+	 * Creates a domain of values over which a perfect hash can be defined from
+	 * a supplied iterable. This method behaves identically to
+	 * {@link #over(Iterable)} with the exception that it records an explicit
+	 * type for the elements of the domain. This explicit type can result in
+	 * reduced memory usage for domains over primitive types (eg. using
+	 * long.class) and may yield greater type safety.
+	 *
+	 * @param values
+	 *            iterable access to the domain values
+	 * @param type
+	 *            an explicit type for the domain values
+	 * @return a domain over the supplied values
+	 */
+	public static <T> PerfectDomain<T> over(Iterable<? extends T> values, Class<T> type) {
+		if (values == null) throw new IllegalArgumentException("null values");
+		if (type == null) throw new IllegalArgumentException("null type");
+		return new PerfectDomain<>(new AdaptedCollection<>(values), type);
 	}
 
 	/**
